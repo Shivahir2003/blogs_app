@@ -1,18 +1,12 @@
 from django.urls import path
 
-from accounts.views import indexview
+from accounts.views import UserAuthenticationView
 
+app_name="accounts"
 urlpatterns = [
-    path('list/',indexview,name='user_list'),
-    path('user/signup',indexview,name='user_signup'),
-    path('user/login',indexview,name='user_login'),
-    path('user/logout',indexview,name='user_logout'),
-    path('user/edit/<int:pk>',indexview,name='user_edit'),
+    path('list/',UserAuthenticationView.as_view(),name='user_list'),
+    path('user/signup',UserAuthenticationView.as_view(),name='user_signup'),
+    path('user/login',UserAuthenticationView.as_view(),name='user_login'),
+    path('user/logout',UserAuthenticationView.as_view(),name='user_logout'),
 
 ]
-
-# list/
-# user/edit/<int:pk>
-# user/login
-# user/logout
-# user/signup
