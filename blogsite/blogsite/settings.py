@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'apiset.apps.ApisetConfig',
     'rest_framework',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
