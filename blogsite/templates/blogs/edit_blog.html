@@ -1,0 +1,95 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block pagetitle %} Blogs | Edit Blog {% endblock pagetitle %}
+
+{% block pagecontent %}
+
+<div class="container my-5">
+    <div class="pagetitle mb-4">
+        <h1>edit Blog</h1>
+        <nav>
+            <ol class="breadcrumb"></ol>
+        </nav>
+    </div>
+
+    <section class="section">
+        <div class="col-md-10 justify-content-center">
+            <div class="card">
+                <div class="card-body pt-5">
+                    <form class="row g-3" method="post" id="add-blog-form">
+                        {% csrf_token %}
+
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="id_title" placeholder="title" name="title"
+                                    maxlength="200" required value="{{form.title.value}}" />
+                                <label for="id_task">blog title</label>
+                            </div>
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="id_description"
+                                name="description" style="height: 100px">{{form.description.value}}</textarea>
+                            <label for="id_description">description</label>
+                        </div>
+
+                        <div class="col-12">
+                            <h4>Post:</h4>
+                            {{form.media}} {{form.post}}
+                        </div>
+
+                        <label class="col-sm-2">category:</label>
+                        <div class="col-sm-4">{{form.categories}}</div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a href="{% url 'blogapp:blog_details' pk %}" class="btn btn-secondary">back</a>
+                        </div>
+                    </form>
+
+                    <div id="success" class="text-danger"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- contianer - ends-->
+{% endblock pagecontent %}
+
+{% block extrascripts %}
+<script>
+    $(document).ready(function () {
+
+
+        $("#add-blog-form").on("submit", function (event) {
+            event.preventDefault();
+
+            var data_post = CKEDITOR.instances.id_post.getData();
+            $.ajax({
+                type: 'PUT',
+                url: "http://127.0.0.1:8000/api/blogs/{{pk}}/",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
+                },
+                data: JSON.stringify({
+                    title: $("#id_title").val(),
+                    description: $('#id_description').val(),
+                    post: data_post,
+                    categories: {
+                        id: $('#id_categories').val()
+                    }
+                }),
+                success: function (data) {
+                    alert("blog has been updated")
+                    window.location.href = "{% url 'blogapp:blog_dashboard' %}"
+                },
+                error: function (e) {
+                    alert(JSON.stringify(e))
+                }
+            });
+
+        })
+    });
+</script>
+{% endblock extrascripts %}

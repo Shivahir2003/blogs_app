@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from model_utils.models import TimeStampedModel
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.core.signals import request_finished
+from blogapp.utils import send_email
+
 
 from ckeditor.fields import RichTextField
 
@@ -55,3 +60,17 @@ class Reply(TimeStampedModel):
 
     class Meta:
         ordering=['-created']
+
+
+@receiver(post_save , sender=Comments)
+def send_comment_mail(sender,instance,**kwargs):
+    subject= f'{instance.user.username} is commented on your blog'
+    message = f'{instance.user.username} is commented : {instance.comment}  on your blog  "{instance.blog.title}"'
+    send_email(subject,message,instance.blog.user)
+
+@receiver(post_save ,sender=Reply)
+def send_reply_mail(sender,instance,**kwargs):
+    subject= f'{instance.user.username} is replyed on your comment on blog app'
+    message = f'{instance.user.username} is replyed : {instance.reply}  on your comment  "{instance.comment.comment}"'
+    send_email(subject,message,instance.comment.user)
+ 

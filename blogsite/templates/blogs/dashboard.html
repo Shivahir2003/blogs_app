@@ -7,30 +7,32 @@
 <div class="container my-5">
     <div class="row row-cols-1  row-cols-sm-2 row-cols-md-3 g-3">
 
+      {% for blog in blogs %}
+
       <div class="col">
       <div class="card" style="width: 25rem;">
           <div class="card-body">
-            <h5 class="card-title">Blog title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">category</h6>
-            <p class="card-text">description about blogs.</p>
+            <h2 class="card-title">{{blog.title}}</h2>
+            <h6>
+             <span>author &nbsp; : &nbsp;</span> {{blog.user.username}}
+            </h6>
+            <h6 class="card-subtitle mb-2 text-body-secondary"><span>category  &nbsp; : &nbsp;</span>{{blog.categories.name}}</h6>
+            <h5 class="card-text">{{blog.description}}</h5>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <a href="{% url 'blogapp:blog_details' %}">
+                  <a href="{% url 'blogapp:blog_details' blog.id %}">
+                    
                       <button type="button" class="btn btn-sm me-2 btn-outline-primary">View</button>
                   </a>
-                  <a href="{% url 'blogapp:blog_create' %}">
-                      <button type="button" class="btn btn-sm ms-2 btn-outline-success">Edit</button>
-                  </a>
-                  </div>
+                </div>
+               <!--<span class="text-secondary">Created date </span>  --> 
               </div>
           </div>
         </div> <!-- card ends-->
       </div> <!-- col ends-->
-     
-                          
-      
-      
+      {% endfor %}
+        
   </div> <!-- card - rows -end -->
-</div>      <!-- card - contianer - ends-->
+</div>  <!-- card - contianer - ends-->
 
 {% endblock pagecontent %}
