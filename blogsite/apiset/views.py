@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
 
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from blogapp.models import Blog,Category,Comments,Reply
 from apiset.serializers import (
@@ -22,6 +26,8 @@ class BlogApi(viewsets.ModelViewSet):
 
     queryset = Blog.objects.all()
     serializer_class =BlogSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         """
@@ -38,12 +44,17 @@ class Categorylist(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get', 'post','delete']
+    authentication_classes = [SessionAuthentication,JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class CommentsList(viewsets.ModelViewSet):
 
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
+    http_method_names=['get','post','patch','delete']
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class ReplyList(viewsets.ModelViewSet):
@@ -51,3 +62,5 @@ class ReplyList(viewsets.ModelViewSet):
     queryset = Reply.objects.all()
     serializer_class =ReplySerializer
     http_method_names = ['get', 'post', 'patch','delete']
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]

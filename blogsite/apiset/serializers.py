@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
-
 from accounts.models import UserProfile
 from blogapp.models import Blog,Category,Comments,Reply
 
@@ -23,9 +22,12 @@ class BlogTitleSerializer(serializers.ModelSerializer):
     """
         define blog title
     """
+    id= serializers.IntegerField(required=False)
+    
     class Meta:
         model = Blog
-        fields= ['title']
+        fields= ['id','title']
+        read_only_fields=['title']
 
 
 class CommentNameSerializer(serializers.ModelSerializer):
@@ -48,7 +50,18 @@ class ReplySetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reply
-        fields = ['reply','user']
+        fields = ['id','reply','user']
+        read_only_fields=['reply']
+
+
+class CategoryNameSerializer(serializers.ModelSerializer):
+
+    id= serializers.IntegerField(required=False)
+
+    class Meta:
+        model= Category
+        fields =['id','name']
+        read_only_fields= ['name']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -78,17 +91,41 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model= Category
-        fields =['name']
+        fields =['id','name']
 
 
 class CommentSerializer(serializers.ModelSerializer):
     blog =BlogTitleSerializer()
     user = UserNameSerializer()
-    reply= ReplySetSerializer(many=True)
+    reply= ReplySetSerializer(many=True,required=False)
 
     class Meta:
         model = Comments
         fields= ['id','comment','blog','user','reply', 'created']
+        read_only_fields= ['created','reply',]
+
+    def validate(self, data):
+        if not self.context['request'].method =="PATCH":
+            if not User.objects.filter(pk=data['user']['id']).exists() :
+                raise serializers.ValidationError("User not found")
+            elif not Blog.objects.filter(pk=data['blog']['id']).exists():
+                raise serializers.ValidationError("Blog not found")
+        return data
+
+    def create(self, validated_data):
+        blog = Blog.objects.get(pk = validated_data['blog']['id'])
+        user= User.objects.get(pk =validated_data['user']['id'])
+        comment =Comments.objects.create(
+            comment=validated_data['comment'],
+            blog=blog,
+            user=user
+        )
+        return comment
+
+    def update(self, instance, validated_data):
+        instance.comment=validated_data.get('comment',instance.comment)
+        instance.save()
+        return instance
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -97,7 +134,7 @@ class ReplySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reply
-        fields = ['reply','comment','user','created']
+        fields = ['id','reply','comment','user','created']
         read_only_fields=['created']
 
     def validate(self,data):
@@ -135,20 +172,44 @@ class ReplySerializer(serializers.ModelSerializer):
 
 class BlogSerializer(serializers.ModelSerializer):
 
-    user = UserNameSerializer()
-    categories = CategorySerializer()
-    comments = CommentSerializer(many=True)
+    user = UserNameSerializer(required=False)
+    categories = CategoryNameSerializer()
+    comments = CommentSerializer(many=True, required=False)
 
     class Meta:
         model= Blog
-        fields = ['title','description','post','user','categories','created','comments']
-        read_only_fields=['comments']
+        fields = ['id','title','description','post','user','categories','created','comments']
+        read_only_fields=['comments','created']
+
+    def create(self, validated_data):
+
+        user=User.objects.get(pk =validated_data['user']['id'])
+        category=Category.objects.get(pk =validated_data['categories']['id'])
+        blog = Blog.objects.create(
+            user=user,
+            title=validated_data['title'],
+            description=validated_data['description'],
+            post=validated_data['post'],
+            categories=category,
+        )
+        return blog
+
+    def update(self, instance, validated_data):
+        instance.title=validated_data.get('title',instance.title)
+        instance.description=validated_data.get('description',instance.description)
+        instance.post=validated_data.get('post',instance.post)
+        if 'categories' in validated_data.keys():
+            category=Category.objects.get(pk=validated_data['categories']['id'])
+            instance.categories=category
+        instance.save()
+        return instance
 
 
 class BlogListSerializer(serializers.ModelSerializer):
 
     user = UserNameSerializer()
+    categories =CategorySerializer()
 
     class Meta:
         model= Blog
-        fields=['title','description','created','user']
+        fields=['id','title','description','created','user','categories']
