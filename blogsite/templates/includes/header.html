@@ -9,25 +9,29 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'blogapp:blog_dashboard' %}">Blogs-all</a>
           </li>
+          {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link " aria-current="page" href="{% url 'blogapp:blog_create' %}">Create blog</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link " aria-current="page" href="{% url 'accounts:user_list' %}">Profile</a>
-          </li>
+          {% endif %}
           
         </ul>
         
-          
+        
+        
         
         
         {% if request.user.is_authenticated %}
-        <a href="blogs_list.html">
+        <div class="d-flex justify-content-evenly ">
+        <h3 class="me-4">{{request.user.username}}</h3>
+        <a href="{% url 'accounts:user_logout' %}">
           <button class="btn btn-outline-danger me-5" type="submit">
             Logout
           </button>
         </a>
+      </div>
         {% else %}
+        
         <a href="{% url 'accounts:user_login' %}">
           <button class="btn btn-outline-success me-2 text-none" type="submit">
             Login
