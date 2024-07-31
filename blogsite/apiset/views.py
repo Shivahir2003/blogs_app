@@ -7,6 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 from blogapp.models import Blog,Category,Comments,Reply
+from apiset.throttling import CommentsThrottlePerDay,CommentsThrottlePerSeconds
 from apiset.serializers import (
     UserSerializer,
     BlogSerializer,
@@ -55,6 +56,7 @@ class CommentsList(viewsets.ModelViewSet):
     http_method_names=['get','post','patch','delete']
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    throttle_classes=[CommentsThrottlePerDay,CommentsThrottlePerSeconds]
 
 
 class ReplyList(viewsets.ModelViewSet):

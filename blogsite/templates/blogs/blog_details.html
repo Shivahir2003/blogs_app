@@ -232,7 +232,7 @@
           location.reload();
         },
         error: function (e) {
-          alert(e)
+          alert(JSON.stringify(e))
         }
       })
     } else {
@@ -260,14 +260,21 @@
   }
         }),
     success: function (e) {
-      alert(`comment "${e.comment}" added`)
+      location.reload();
     },
   error: function (e) {
-    if (confirm('you are not logged in please log to send comment')) {
+    if (e.status == "403") 
+    {
+      if (confirm('you are not logged in please log to send comment')) {
       window.location.href = "{% url 'accounts:user_login' %}";
     } else {
       alert("you cannot send comment without login")
     }
+    }else if(e.status == "429")
+    {
+      alert("too many Comment request \nyou can comment 2 per minute 50 per day \n"+ JSON.stringify(e.responseJSON.detail))
+    }
+    
   }
       });
     });

@@ -80,7 +80,11 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]   
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'commentsperday' : '50/day',
+        'commentsperSeconds' : '2/min',
+    }
 }
 
 SIMPLE_JWT = {
