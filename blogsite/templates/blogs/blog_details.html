@@ -67,7 +67,7 @@
           <p class="d-inline-flex gap-1">
 
             {% if comment.reply %}
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse"
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#comment-collapse{{comment.id}}"
               aria-expanded="false" aria-controls="multiCollapseExample1">show all reply</button>
             {% endif %}
             <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
@@ -83,7 +83,7 @@
 
           <div class="row">
             <div class="col">
-              <div class="collapse multi-collapse" id="multiCollapseExample1">
+              <div class="collapse" id="comment-collapse{{comment.id}}">
                 <div class="card m-3">
                   <div class="card-header d-flex">
                     replyed

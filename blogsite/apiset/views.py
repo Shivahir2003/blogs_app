@@ -45,7 +45,7 @@ class Categorylist(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get', 'post','delete']
-    authentication_classes = [SessionAuthentication,JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
@@ -57,6 +57,7 @@ class CommentsList(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     throttle_classes=[CommentsThrottlePerDay,CommentsThrottlePerSeconds]
+
 
 
 class ReplyList(viewsets.ModelViewSet):

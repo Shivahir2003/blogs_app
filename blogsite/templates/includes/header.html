@@ -13,6 +13,9 @@
           <li class="nav-item">
             <a class="nav-link " aria-current="page" href="{% url 'blogapp:blog_create' %}">Create blog</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link " aria-current="page" href="{% url 'blogapp:blog_category' %}">category</a>
+          </li>
           {% endif %}
           
         </ul>
@@ -25,7 +28,7 @@
         <div class="d-flex justify-content-evenly ">
         <h3 class="me-4">{{request.user.username}}</h3>
         <a href="{% url 'accounts:user_logout' %}">
-          <button class="btn btn-outline-danger me-5" type="submit">
+          <button class="btn btn-outline-danger me-5" id="logout-user" type="submit">
             Logout
           </button>
         </a>
