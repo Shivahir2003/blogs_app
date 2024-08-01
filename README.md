@@ -12,7 +12,7 @@ Install my-project with npm
 git clone https://github.com/Shivahir2003/blogs_app.git
 ```
 ```bash
-virtualenv venv
+python3 -m venv venv
 ```
 ```bash
 source venv/bin/activate
