@@ -1,0 +1,89 @@
+{% extends 'layouts/base_auth.html' %}
+{% load static %}
+{% block pagetitle %} Blogs | SignUp {% endblock pagetitle %}
+
+{% block extrastyle %}
+<style>
+    .form-signup {
+        max-width: 360px;
+        padding: 1.3rem;
+    }
+</style>
+{% endblock extrastyle %}
+
+{% block pagecontent %}
+<main class="row form-signup w-100 my-4 m-auto border-top border-primary border-4 shadow ">
+
+    <form name="myform" id="signupForm" data-savemethod='add' method='post' enctype="multipart/form-data">
+        <h4 class="heading-form fw-norma align-self-center">Django Registration Form</h4>
+        
+        <div class="col-12">
+            <label for="id_username" class="form-label">Username</label>
+            <div class="input-group has-validation">
+            <input type="text" name="username" class="form-control" id="id_username" required>
+            <label id="id_username-error" class="text-danger col-12"  for={{form.username.id_for_label}}>
+                {{userform.username.errors}}
+            </label>
+            </div>
+        </div>
+    
+        <div class="col-12">
+            <label for="id_password1" class="form-label">Password</label>
+            <input type="password" name="password1" class="form-control" id="id_password1" required>
+            <label id="id_password1-error" class="text-danger" for={{form.password1.id_for_label}}>
+                {{userform.password1.errors}}
+            </label>
+        </div>
+    
+        <div class="col-12">
+            <label for="id_password2" class="form-label">Confirm Password</label>
+            <input type="password" name="password2" class="form-control" id="id_password2" required>
+            <label id="id_password2-error" class="text-danger" for={{form.password2.id_for_label}}>
+                {{userform.password2.errors}}
+            </label>
+        </div>
+        <div class="col-12">
+            <label for="id_email" class="form-label">Your Email</label>
+            <input type="email" name="email" class="form-control" id="id_email" required>
+            <label id="id_email-error" class="text-danger" for={{form.email.id_for_label}}>
+                {{userform.email.errors}}
+            </label>
+        </div>
+    
+        <div class="col-md-6 col-6">
+            <label for="id_first_name" class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" id="id_first_name" required>
+            <label id="id_first_name-error" class="text-danger" for={{form.first_name.id_for_label}}>
+                {{userform.first_name.errors}}
+            </label>
+          </div>
+          <div class="col-md-6 col-6">
+            <label for="id_last_name" class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" id="id_last_name" required>
+            <label id="id_last_name" class="text-danger" for={{form.last_name.id_for_label}}>
+                {{userform.last_name.errors}}
+            </label>
+        </div>
+    
+        <div class="col-12">
+            <label for="id_mobile_number" class="form-label">Mobile Number</label>
+            <input type="text" name="mobile_number" class="form-control" id="id_mobile_number" maxlength="10" required>
+            <label id="id_mobile_number" class="text-danger" for={{form.mobile_number.id_for_label}}>
+                {{profileform.mobile_number.errors}}
+            </label>
+        </div>
+    
+    
+    
+        <div class="col-12">
+            <button class="btn btn-primary w-100" type="submit">Create Account</button>
+        </div>
+    
+        <div class="col-12">
+            <p class="small mb-0 mt-2">Already have an account? <a href="{% url 'accounts:user_login' %}"><b>Log in</b></a></p>
+        </div>
+    
+        </form>
+        
+    </main>
+{% endblock pagecontent %}

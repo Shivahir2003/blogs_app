@@ -1,0 +1,96 @@
+{% extends 'layouts/base_auth.html' %}
+{% load static %}
+{% block pagetitle %} Blogs | Login {% endblock pagetitle %}
+
+{% block extrastyle %}
+<style>
+    .form-signup {
+        max-width: 360px;
+        padding: 1.3rem;
+    }
+</style>
+{% endblock extrastyle %}
+
+{% block pagecontent %}
+{% if messages %}
+<div class="d-flex justify-content-center ">
+    <div class="alert alert-danger alert-dismissible fade show alert-animate z-2" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>
+        {% for message in messages %}
+        {{ message}}
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+{% endif %}
+
+
+<main class="form-signup w-100 my-4 m-auto border-top border-warning border-4 shadow  ">
+    <h3 class="text-center"><a href="{% url 'blogapp:blog_dashboard' %}" class="text-decoration-none text-light">Blog
+            app</a></h3>
+
+    <form name="myform" id="loginForm" data-savemethod='add' method='post' enctype="multipart/form-data">
+        {% csrf_token %}
+        <h4 class="heading-form fw-norma align-self-center">Login </h4>
+
+        <div class="input-group mb-2 ">
+            <span class="input-group-text"><i class="ph ph-user"></i></span>
+            <input type="text" class="form-control" id="id_username" name="username" placeholder="username">
+            <label id="id_username-error" class="col-12 m-0 text-danger" for={{form.password.id_for_label}}>
+                {{login_user.username.errors}}
+            </label>
+        </div>
+        <div class="input-group mb-2">
+
+            <span class="input-group-text"><i class="ph ph-lock-simple"></i></span>
+            <input type="password" class="form-control" id="id_password" name="password" placeholder="Password">
+            <label id="id_password-error" class="col-12 m-0 text-danger" for={{form.password.id_for_label}}>
+                {{login_user.password.errors}}
+            </label>
+        </div>
+        <div class="col-12">
+            <p class="small mb-0 ">Don't have account? <a href="{% url 'accounts:user_signup' %}"><b>Create an
+                        account</b></a></p>
+        </div>
+        <button id="submitbtn" class="btn btn-warning w-100 py-2 mt-3" type="submit">Login</button>
+    </form>
+</main>
+
+{% endblock pagecontent %}
+
+{% block extrascripts %}
+<script>
+    $(document).ready(function () {
+
+        $("#loginForm").on("submit", function (e) {
+            $.ajax({
+                type: 'POST',
+                url: "http://127.0.0.1:8000/api/token/",
+                dataType: "json",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: JSON.stringify({
+                    "username": $("#id_username").val(),
+                    "password": $("#id_password").val()
+                }),
+                success: function (e) {
+                    const jwttoken = e.access
+                    localStorage.setItem("jwtToken" , jwttoken)
+                },
+
+            });
+        })
+    });
+</script>
+{% endblock extrascripts %}
+
+
+<!-- error: function (e) {
+    if(e.status == "401"){
+        alert("wrong credentials")
+    }
+    else{
+        console.log(e)
+    }
+} -->
