@@ -4,6 +4,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 
 from blogapp.models import Blog,Category,Comments,Reply
@@ -25,10 +27,16 @@ class UserApi(viewsets.ModelViewSet):
 
 class BlogApi(viewsets.ModelViewSet):
 
-    queryset = Blog.objects.all()
+    queryset = Blog.objects.select_related("user","categories").all()
     serializer_class =BlogSerializer
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['user', 'id']
+    search_fields = ['title']
+    ordering_fields = ['user', 'title','created']
+    ordering = ['created']
+
 
     def get_serializer_class(self):
         """
