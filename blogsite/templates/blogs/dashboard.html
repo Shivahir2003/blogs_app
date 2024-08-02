@@ -31,9 +31,9 @@
       beforeSend: function () {
         $("#loding-page").show();
       },
-      complete: function(){
+      complete: function () {
         $("#loding-page").hide();
-    },
+      },
       success: function (data) {
         $.each(data, function (index, blog) {
           $("#blog-card-main").append(`

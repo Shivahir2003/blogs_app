@@ -1,5 +1,8 @@
-{% extends 'layouts/base.html' %} {% load static %} {% block pagetitle %} Blogs
-| Create Blog {% endblock pagetitle %} {% block pagecontent %}
+{% extends 'layouts/base.html' %}
+ {% load static %} 
+ {% block pagetitle %} Blogs | Create Blog {% endblock pagetitle %} 
+ 
+ {% block pagecontent %}
 <div class="container my-5">
   <div class="pagetitle mb-4">
     {% if '/blogs/blog/edit/' in request.path %}
@@ -15,22 +18,25 @@
 
   <section class="section">
     <div class="col-md-10 justify-content-center">
+      <div class="col-8 text-danger" id="erorr_list">
+        <ul id="errors">
+        </ul>
+      </div>
       <div class="card">
         <div class="card-body pt-5">
-          <form class="row g-3" method="post" id="add-blog-form">
+          <form class="row g-3 needs-validation" method="post" id="add-blog-form">
             {% csrf_token %}
 
             <div class="col-md-12">
               <div class="form-floating">
                 <input type="text" class="form-control" id="id_title" placeholder="title" name="title" maxlength="200"
-                  required {% if form.title.value %}value="{{form.title.value}}" {% endif %} />
+                  required/>
                 <label for="id_task">blog title</label>
               </div>
             </div>
             <div class="form-floating">
               <textarea class="form-control" placeholder="Leave a comment here" id="id_description" name="description"
-                style="height: 100px">
-{% if form.description.value %}{{form.description.value}}{% endif %}</textarea>
+                style="height: 100px"></textarea>
               <label for="id_description">description</label>
             </div>
 
@@ -64,51 +70,54 @@
 
 {% block extrascripts %}
 <script>
-  $(document).ready(function () {
+$(document).ready(function () {
+    $("#erorr_list").hide()
     if ("{{request.user.is_authenticated}}" == "True") {
-      var user_id ={{ request.user.id }};
-    }
+        var user_id = {{request.user.id }}
+}
 
-    $("#fill-data").on('click', function () {
-      $('#id_title').val('test title')
-      $('#id_description').val('test description')
-      $('#id_categories').val('3')
-    })
+$("#fill-data").on('click', function () {
+    $('#id_title').val('test title@123')
+    $('#id_description').val('test @12321@description')
+    $('#id_categories').val('3')
+})
 
-    $("#add-blog-form").on("submit", function (event) {
-      event.preventDefault();
+$("#add-blog-form").on("submit", function (event) {
+    event.preventDefault();
 
-      var data_post = CKEDITOR.instances.id_post.getData();
-      $.ajax({
+    var data_post = CKEDITOR.instances.id_post.getData();
+    $.ajax({
         type: 'POST',
         url: "http://127.0.0.1:8000/api/blogs/",
         "headers": {
-          "Content-Type": "application/json",
-          "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
+            "Content-Type": "application/json",
+            "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
         },
         data: JSON.stringify({
-          title: $("#id_title").val(),
-          description: $('#id_description').val(),
-          post: data_post,
-          user: {
-            id: user_id
-          },
-      categories : {
-      id: $('#id_categories').val()
-    }
+            title: $("#id_title").val(),
+            description: $('#id_description').val(),
+            post: data_post,
+            user: {
+                id: user_id
+            },
+            categories: {
+                id: $('#id_categories').val()
+            }
         }),
-    success: function (data) {
-      window.location.href = "{% url 'blogapp:blog_dashboard' %}"
-    },
-  error: function (e) {
-    if (confirm('you are not logged in please log to create a new blog ')) {
-      window.location.href = "{% url 'accounts:user_login' %}";
-    }else{
-      alert("you cannot create new blog without login")
-    }
-  }
-      });
-    })
-  });
+        success: function (data) {
+            window.location.href = "{% url 'blogapp:blog_dashboard' %}"
+        },
+        error: function (e) {
+            if (e.status == "400") {
+                $("#erorr_list").show()
+                $("#errors").append(`<li>${JSON.stringify(e.responseJSON)}</li>`)
+            } else {
+                console.log(e)
+            }
+        }
+    });
+})
+})
+
 </script>
 {% endblock extrascripts %}
