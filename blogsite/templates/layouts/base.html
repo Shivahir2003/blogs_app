@@ -31,7 +31,16 @@
     {% endblock scripts %}
 </body>
 <!-- Custom jquery File -->
+
 {% block extrascripts %}
 {% endblock extrascripts %}
+
+<script>
+  $(document).ready(function (){
+      $("#logout-user").on("click",function (){
+        localStorage.removeItem("jwtToken");
+      })
+  })
+</script>
 
 </html>
