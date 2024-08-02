@@ -11,7 +11,8 @@ from apiset.views import (
     BlogApi,
     Categorylist,
     CommentsList,
-    ReplyList
+    ReplyList,
+    AuthBlogList
     )
 
 
@@ -25,6 +26,7 @@ router_api.register(r'comments',CommentsList)
 app_name = "apiset"
 urlpatterns = [
     path('', include(router_api.urls)),
+    path('myblogs/',AuthBlogList.as_view()),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

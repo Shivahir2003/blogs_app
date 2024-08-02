@@ -24,6 +24,8 @@ class BlogAppView(View):
             return self.dashboard(request)
         elif request.path == reverse("blogapp:blog_category"):
             return self.blog_categories(request)
+        elif request.path == reverse("blogapp:blog_myblogs"):
+            return self.myblog_view(request)
         elif '/blogs/blog/details/'in request.path:
             return self.blog_details(request,**kwargs)
         elif '/blogs/blog/edit/'in request.path:
@@ -129,3 +131,15 @@ class BlogAppView(View):
                 In Post : create new categories
         """
         return render(request,'blogs/categories.html')
+    
+    def myblog_view(self,request):
+        """
+            List blog of authenticated user
+            
+            Arguments:
+                request (HttpRequest)
+            
+            Retunrns:
+                In Get : list all blog for logged in user
+        """
+        return render(request,"blogs/myblogs.html")
