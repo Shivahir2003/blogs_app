@@ -4,33 +4,72 @@
 
 
 {% block pagecontent %}
+<div id="loding-page">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
 <div class="container my-5">
-    <div class="row row-cols-1  row-cols-sm-2 row-cols-md-3 g-3">
+  <div id="blog-card-main" class="row row-cols-1  row-cols-sm-2 row-cols-md-3 g-3">
 
-      <div class="col">
-      <div class="card" style="width: 25rem;">
-          <div class="card-body">
-            <h5 class="card-title">Blog title</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">category</h6>
-            <p class="card-text">description about blogs.</p>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <a href="{% url 'blogapp:blog_details' %}">
-                      <button type="button" class="btn btn-sm me-2 btn-outline-primary">View</button>
-                  </a>
-                  <a href="{% url 'blogapp:blog_create' %}">
-                      <button type="button" class="btn btn-sm ms-2 btn-outline-success">Edit</button>
-                  </a>
-                  </div>
-              </div>
-          </div>
-        </div> <!-- card ends-->
-      </div> <!-- col ends-->
-     
-                          
-      
-      
+
+
   </div> <!-- card - rows -end -->
-</div>      <!-- card - contianer - ends-->
+</div> <!-- card - contianer - ends-->
 
 {% endblock pagecontent %}
+
+{% block extrascripts %}
+
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      type: 'GET',
+      url: "http://127.0.0.1:8000/api/blogs/",
+      beforeSend: function () {
+        $("#loding-page").show();
+      },
+      complete: function () {
+        $("#loding-page").hide();
+      },
+      success: function (data) {
+        $.each(data, function (index, blog) {
+          $("#blog-card-main").append(`
+          <div class="col">
+      <div class="card" style="width: 25rem;">
+        <div class="card-body">
+          <h2 class="card-title">${blog.title}</h2>
+          <h6>
+            <span>author &nbsp; : &nbsp;</span> ${blog.user.username}
+          </h6>
+          <h6 class="card-subtitle mb-2 text-body-secondary"><span>category &nbsp; :
+              &nbsp;</span>${blog.categories.name}</h6>
+          <h5 class="card-text">${blog.description}</h5>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+              <a href="http://127.0.0.1:8000/blogs/blog/details/${blog.id}">
+
+                <button type="button" class="btn btn-sm me-2 btn-outline-primary">View</button>
+              </a>
+              
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>
+          `)
+
+
+        })
+      },
+      error: function (e) {
+        console.log(e)
+      }
+    });
+  });
+</script>
+
+
+{% endblock extrascripts %}
