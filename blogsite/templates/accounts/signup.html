@@ -15,6 +15,7 @@
 <main class="row form-signup w-100 my-4 m-auto border-top border-primary border-4 shadow ">
 
     <form name="myform" id="signupForm" data-savemethod='add' method='post' enctype="multipart/form-data">
+        {% csrf_token %}
         <h4 class="heading-form fw-norma align-self-center">Django Registration Form</h4>
         
         <div class="col-12">
@@ -49,21 +50,23 @@
                 {{userform.email.errors}}
             </label>
         </div>
-    
-        <div class="col-md-6 col-6">
+    <div class="col-12 d-md-flex justify-content-between">
+        <div class="col-md-5">
             <label for="id_first_name" class="form-label">First Name</label>
             <input type="text" name="first_name" class="form-control" id="id_first_name" required>
             <label id="id_first_name-error" class="text-danger" for={{form.first_name.id_for_label}}>
                 {{userform.first_name.errors}}
             </label>
           </div>
-          <div class="col-md-6 col-6">
+          <div class="col-md-5">
             <label for="id_last_name" class="form-label">Last Name</label>
             <input type="text" name="last_name" class="form-control" id="id_last_name" required>
             <label id="id_last_name" class="text-danger" for={{form.last_name.id_for_label}}>
                 {{userform.last_name.errors}}
             </label>
         </div>
+    </div>
+
     
         <div class="col-12">
             <label for="id_mobile_number" class="form-label">Mobile Number</label>
@@ -78,6 +81,7 @@
         <div class="col-12">
             <button class="btn btn-primary w-100" type="submit">Create Account</button>
         </div>
+        <div class="btn btn-secondary mt-3 w-100" id="fill-data">fill</div>
     
         <div class="col-12">
             <p class="small mb-0 mt-2">Already have an account? <a href="{% url 'accounts:user_login' %}"><b>Log in</b></a></p>
@@ -87,3 +91,55 @@
         
     </main>
 {% endblock pagecontent %}
+
+{% block extrascripts %}
+<script>
+  $(document).ready(function () {
+
+$("#fill-data").on('click', function () {
+    $('#id_username').val('testapiusre')
+    $('#id_email').val('testapi@gmail.com')
+    $('#id_first_name').val('test')
+    $('#id_last_name').val('usr')
+    $('#id_mobile_number').val('1243342749')
+
+  })
+
+$("#signupForm").on("submit", function (event) {
+    event.preventDefault();
+
+    $.ajax({
+      type: 'POST',
+      url: "http://127.0.0.1:8000/api/users/",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
+      },
+      data: JSON.stringify({
+        user:{
+            username:$('#id_username').val(),
+            password:$('#id_password1').val(),
+            password2:$('#id_password2').val(),
+            first_name:$('#id_first_name').val(),
+            last_name:$('#id_last_name').val(),
+            email:$('#id_email').val(),
+        },
+        mobile_number:$('#id_mobile_number').val(),
+      }),
+      success: function (data) {
+        alert("user registered")
+        window.location.href = "{% url 'accounts:user_login' %}"
+      },
+      error: function (e) {
+        if (e.status == "400") {
+          alert(JSON.stringify(e))
+        } else {
+          console.log(e)
+        }
+      }
+    });
+  })
+})
+
+</script>
+{% endblock extrascripts %}
