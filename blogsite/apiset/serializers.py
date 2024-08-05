@@ -24,7 +24,7 @@ class BlogTitleSerializer(serializers.ModelSerializer):
         define blog title
     """
     id = serializers.IntegerField(required=False)
-    
+
     class Meta:
         model = Blog
         fields = ['id','title']
@@ -71,6 +71,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     full_name = serializers.SerializerMethodField('get_full_name')
 
+    password = serializers.CharField(write_only=True, required=True)
+    password2 = serializers.CharField(write_only=True, required=True)
+
     def get_full_name(self, user):
         """
             calculate full name from first_name and last_name
@@ -79,14 +82,41 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username','first_name','last_name','email','full_name']
+        fields = ['username','password','password2','first_name','last_name','email','full_name']
 
 class UserProfileSerializer(serializers.ModelSerializer):
-
+    user = UserSerializer()
 
     class Meta:
         model = UserProfile
-        fields = ['mobile_number']
+        fields = ['user','mobile_number']
+
+    def validate(self,data):
+
+        if data['user']['password'] != data['user']['password2']:
+            raise serializers.ValidationError(
+                {
+                    "comfirm password": "password fields does not match"
+                }
+            )
+        return data
+
+    def create(self, validated_data):
+
+        user = User.objects.create(
+            username =validated_data['user']['username'],
+            first_name=validated_data['user']['first_name'],
+            last_name=validated_data['user']['last_name'],
+            email=validated_data['user']['email']
+        )
+        user.set_password(validated_data['user']['password'])
+        user.save()
+
+        userprofile = UserProfile.objects.create(
+            user=user,
+            mobile_number = validated_data['mobile_number']
+        )
+        return userprofile
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -177,7 +207,7 @@ class BlogSerializer(serializers.ModelSerializer):
     user = UserNameSerializer(required=False)
     categories = CategoryNameSerializer()
     comments = CommentSerializer(many=True, required=False)
-    
+
 
     class Meta:
         model= Blog

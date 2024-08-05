@@ -6,12 +6,14 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.generics import ListAPIView
 
 
+from accounts.models import UserProfile
 from blogapp.models import Blog,Category,Comments,Reply
 from apiset.throttling import CommentsThrottlePerDay,CommentsThrottlePerSeconds
 from apiset.serializers import (
-    UserSerializer,
+    UserProfileSerializer,
     BlogSerializer,
     CategorySerializer,
     CommentSerializer,
@@ -22,8 +24,8 @@ from apiset.serializers import (
 
 class UserApi(viewsets.ModelViewSet):
 
-    queryset = User.objects.all()
-    serializer_class= UserSerializer
+    queryset = UserProfile.objects.all()
+    serializer_class= UserProfileSerializer
 
 class BlogApi(viewsets.ModelViewSet):
 
@@ -38,7 +40,7 @@ class BlogApi(viewsets.ModelViewSet):
     ordering = ['created']
 
 
-    def get_serializer_class(self):
+    def get_seriablogslizer_class(self):
         """
             Return the correct serializer according to the action.
         """
@@ -46,6 +48,16 @@ class BlogApi(viewsets.ModelViewSet):
             return BlogListSerializer
         else:
             return super().get_serializer_class()
+
+class AuthBlogList(ListAPIView):
+    serializer_class= BlogListSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post','delete']
+
+    def get_queryset(self):
+        queryset = Blog.objects.filter(user=self.request.user)
+        return queryset
 
 
 class Categorylist(viewsets.ModelViewSet):
