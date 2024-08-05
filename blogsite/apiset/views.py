@@ -53,7 +53,6 @@ class AuthBlogList(ListAPIView):
     serializer_class= BlogListSerializer
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post','delete']
 
     def get_queryset(self):
         queryset = Blog.objects.filter(user=self.request.user)

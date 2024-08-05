@@ -27,7 +27,7 @@
   $(document).ready(function () {
     $.ajax({
       type: 'GET',
-      url: "http://127.0.0.1:8000/api/blogs/",
+      url: "http://127.0.0.1:8000/api/myblogs",
       beforeSend: function () {
         $("#loding-page").show();
       },
@@ -44,14 +44,16 @@
           <h6>
             <span>author &nbsp; : &nbsp;</span> ${blog.user.username}
           </h6>
-          <h6 class="card-subtitle  mb-2 text-body-secondary" "><span>category &nbsp; :
+          <h6 class="card-subtitle mb-2 text-body-secondary"><span>category &nbsp; :
               &nbsp;</span>${blog.categories.name}</h6>
-          <h5 class="card-text text-truncate" >${blog.description}</h5>
+          <h5 class="card-text text-truncate">${blog.description}</h5>
           <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
               <a href="http://127.0.0.1:8000/blogs/blog/details/${blog.id}">
-
                 <button type="button" class="btn btn-sm me-2 btn-outline-primary">View</button>
+              </a>
+              <a href="http://127.0.0.1:8000/blogs/blog/edit/${blog.id}">
+                <button type="button" class="btn btn-sm me-2 btn-outline-success">Edit</button>
               </a>
               
             </div>
@@ -65,6 +67,7 @@
         })
       },
       error: function (e) {
+        $("#loding-page").hide();
         console.log(e)
       }
     });

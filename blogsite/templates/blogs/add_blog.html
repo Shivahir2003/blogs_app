@@ -1,8 +1,8 @@
 {% extends 'layouts/base.html' %}
- {% load static %} 
- {% block pagetitle %} Blogs | Create Blog {% endblock pagetitle %} 
- 
- {% block pagecontent %}
+{% load static %}
+{% block pagetitle %} Blogs | Create Blog {% endblock pagetitle %}
+
+{% block pagecontent %}
 <div class="container my-5">
   <div class="pagetitle mb-4">
     {% if '/blogs/blog/edit/' in request.path %}
@@ -27,26 +27,34 @@
           <form class="row g-3 needs-validation" method="post" id="add-blog-form">
             {% csrf_token %}
 
-            <div class="col-md-12">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="id_title" placeholder="title" name="title" maxlength="200"
-                  required/>
+            <div class="col-md-12 has-validation">
+              <div class="form-floating ">
+                <input type="text" class="form-control " id="id_title" placeholder="title" name="title" maxlength="200" />
                 <label for="id_task">blog title</label>
               </div>
+              <div class="invalid-feedback" id="invalid_title">
+                please enter title of the blog
+              </div>
             </div>
-            <div class="form-floating">
-              <textarea class="form-control" placeholder="Leave a comment here" id="id_description" name="description"
+
+            <div class="col-md-12">
+              <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="id_description" name="description"
                 style="height: 100px"></textarea>
-              <label for="id_description">description</label>
+                <label for="id_description">description</label>
+              </div>
             </div>
 
             <div class="col-12">
               <h4>Post:</h4>
-              {{form.media}} {{form.post}}
+              {{form.media}} 
+              {{form.post}}
+              <div class="text-danger " id="invalid_post">
+              </div>
             </div>
 
-            <label class="col-sm-2">category:</label>
-            <div class="col-sm-4">{{form.categories}}</div>
+              <label class="col-sm-2">category:</label>
+              <div class="col-sm-4 ">{{form.categories}}</div>
 
             <div class="text-center">
               {% if '/blogs/blog/edit/' in request.path %}
@@ -70,53 +78,55 @@
 
 {% block extrascripts %}
 <script>
-$(document).ready(function () {
+  $(document).ready(function () {
     $("#erorr_list").hide()
     if ("{{request.user.is_authenticated}}" == "True") {
-        var user_id = {{request.user.id }}
-}
+      var user_id = {{ request.user.id }}
+  }
 
 $("#fill-data").on('click', function () {
     $('#id_title').val('test title@123')
     $('#id_description').val('test @12321@description')
     $('#id_categories').val('3')
-})
+  })
 
 $("#add-blog-form").on("submit", function (event) {
     event.preventDefault();
-
     var data_post = CKEDITOR.instances.id_post.getData();
+
+    console.log($("#id_title").val())
+    console.log(data_post)
     $.ajax({
-        type: 'POST',
-        url: "http://127.0.0.1:8000/api/blogs/",
-        "headers": {
-            "Content-Type": "application/json",
-            "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
+      type: 'POST',
+      url: "http://127.0.0.1:8000/api/blogs/",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-csrftoken": $("[name=csrfmiddlewaretoken]").val()
+      },
+      data: JSON.stringify({
+        title: $("#id_title").val(),
+        description: $('#id_description').val(),
+        post: data_post,
+        user: {
+          id: user_id
         },
-        data: JSON.stringify({
-            title: $("#id_title").val(),
-            description: $('#id_description').val(),
-            post: data_post,
-            user: {
-                id: user_id
-            },
-            categories: {
-                id: $('#id_categories').val()
-            }
-        }),
-        success: function (data) {
-            window.location.href = "{% url 'blogapp:blog_dashboard' %}"
-        },
-        error: function (e) {
-            if (e.status == "400") {
-                $("#erorr_list").show()
-                $("#errors").append(`<li>${JSON.stringify(e.responseJSON)}</li>`)
-            } else {
-                console.log(e)
-            }
+        categories: {
+          id: $('#id_categories').val()
         }
+      }),
+      success: function (data) {
+        window.location.href = "{% url 'blogapp:blog_dashboard' %}"
+      },
+      error: function (e) {
+        if (e.status == "400") {
+          $("#erorr_list").show()
+          $("#errors").append(`<li>${JSON.stringify(e.responseJSON)}</li>`)
+        } else {
+          console.log(e)
+        }
+      }
     });
-})
+  })
 })
 
 </script>

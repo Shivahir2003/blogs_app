@@ -1,13 +1,12 @@
 import requests
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.generic.base import View
 from django.conf import settings
 
 
 from blogapp.forms import BlogForm
 from blogapp.models import Blog
-
 
 
 class BlogAppView(View):
@@ -24,12 +23,14 @@ class BlogAppView(View):
             return self.dashboard(request)
         elif request.path == reverse("blogapp:blog_category"):
             return self.blog_categories(request)
+        elif request.path == reverse("blogapp:blog_myblogs"):
+            return self.myblog_view(request)
         elif '/blogs/blog/details/'in request.path:
             return self.blog_details(request,**kwargs)
         elif '/blogs/blog/edit/'in request.path:
             return self.blog_edit(request,**kwargs)
         else:
-            return self.dashboard(request)
+            return redirect("blogapp:blog_dashboard")
 
     def dashboard(self,request):
         """
@@ -129,3 +130,15 @@ class BlogAppView(View):
                 In Post : create new categories
         """
         return render(request,'blogs/categories.html')
+    
+    def myblog_view(self,request):
+        """
+            List blog of authenticated user
+            
+            Arguments:
+                request (HttpRequest)
+            
+            Retunrns:
+                In Get : list all blog for logged in user
+        """
+        return render(request,"blogs/myblogs.html")
