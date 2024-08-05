@@ -1,12 +1,14 @@
 from django.db import models
-from blogapp.utils import send_email
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from model_utils.models import TimeStampedModel
 
 from ckeditor.fields import RichTextField
+from blogapp.utils import send_email
 
 
 class Category(models.Model):
@@ -112,8 +114,9 @@ def send_comment_mail(instance,**kwargs):
     """
     if instance.user != instance.blog.user:
         subject= f'A New comment on the post {instance.blog.title}'
-        message = f'{instance.user.username} commented on \nBlog : {instance.blog.title}\nCommente: "{instance.comment}"'
-        send_email(subject,message,instance.blog.user)
+        html_content = render_to_string('email_templates/user_comments_email.html',{'instance':instance})
+        text_content = strip_tags(html_content)
+        send_email(subject,html_content,text_content,instance.blog.user)
 
 @receiver(post_save ,sender=Reply)
 def send_reply_mail(instance,**kwargs):
@@ -127,5 +130,6 @@ def send_reply_mail(instance,**kwargs):
     """
     if instance.user != instance.comment.user :
         subject= f'Reply to your comment on {instance.comment.blog.title}'
-        message = f'Check out the reply from {instance.user.username} on\nBlog: {instance.comment.blog.title}\nComment: {instance.comment.comment}\nReply: {instance.reply}'
-        send_email(subject,message,instance.comment.user)
+        html_content = render_to_string('email_templates/user_reply_email.html',{'instance':instance})
+        text_content = strip_tags(html_content)
+        send_email(subject,html_content,text_content,instance.comment.user)

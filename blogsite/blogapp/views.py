@@ -1,13 +1,12 @@
 import requests
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.generic.base import View
 from django.conf import settings
 
 
 from blogapp.forms import BlogForm
 from blogapp.models import Blog
-
 
 
 class BlogAppView(View):
@@ -31,7 +30,7 @@ class BlogAppView(View):
         elif '/blogs/blog/edit/'in request.path:
             return self.blog_edit(request,**kwargs)
         else:
-            return self.dashboard(request)
+            return redirect("blogapp:blog_dashboard")
 
     def dashboard(self,request):
         """
