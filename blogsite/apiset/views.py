@@ -9,10 +9,11 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView
 
 
+from accounts.models import UserProfile
 from blogapp.models import Blog,Category,Comments,Reply
 from apiset.throttling import CommentsThrottlePerDay,CommentsThrottlePerSeconds
 from apiset.serializers import (
-    UserSerializer,
+    UserProfileSerializer,
     BlogSerializer,
     CategorySerializer,
     CommentSerializer,
@@ -23,8 +24,8 @@ from apiset.serializers import (
 
 class UserApi(viewsets.ModelViewSet):
 
-    queryset = User.objects.all()
-    serializer_class= UserSerializer
+    queryset = UserProfile.objects.all()
+    serializer_class= UserProfileSerializer
 
 class BlogApi(viewsets.ModelViewSet):
 
