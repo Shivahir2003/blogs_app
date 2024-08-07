@@ -107,10 +107,6 @@ class BlogAppView(View):
                 In Get : render blog detail using api request
         """
         url = f'{settings.URL_BLOG_DETAILS}{pk}/'
-
-        # headers = {
-        #     # "Authorization": 
-        # }
         response =requests.get(url)
         blog_detail = response.json()
         context={
