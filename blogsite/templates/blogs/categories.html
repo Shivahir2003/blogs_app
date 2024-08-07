@@ -11,11 +11,12 @@
             <h5 class="card-title">Add Cotegory : </h5>
             <form method="post" id="category-from">
                 {% csrf_token %}
-                <div class="mb-3">
+                <div class="mb-0">
                     <input type="text" class="form-control" name="category" id="id_category"
-                        placeholder="create new category">
+                    placeholder="create new category">
+                    <label for="id_category" id="invalid_category" class="text-danger mb-0 mt-1"></label>
                 </div>
-                <div class="mt-3 text-end">
+                <div class="mt-0 text-end">
                     <button type="submit" class="btn ms-2 btn-outline-info">Send</button>
                 </div>
             </form>
@@ -25,9 +26,7 @@
 </div>
 <div class="container my-5 d-flex justify-content-center">
 
-    <ul id="list_category" class="list-group col-4">
-
-    </ul>
+        <ul id="list_category" class="list-group col-4"></ul>
 </div>
 
 
@@ -67,8 +66,9 @@
                 console.log(e)
             }
         })
-        $("#category-from").on("submit", function (event) {
 
+        $("#category-from").on("submit", function (event) {
+            event.preventDefault();
             $.ajax({
                 type: 'POST',
                 url: "http://127.0.0.1:8000/api/category/",
@@ -82,9 +82,13 @@
                     "name": $("#id_category").val()
                 }),
                 success: function () {
-                    console.log(e)
+                    location.reload();
                 }, error: function (e) {
-                    console.log(e)
+                    if (e.status == "400"){
+                        $("#invalid_category").text(JSON.stringify(e.responseJSON.name[0]))
+                    }else {
+                        console.log(e)
+                    }
                 }
 
             })
