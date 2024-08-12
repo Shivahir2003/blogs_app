@@ -20,7 +20,7 @@
         {{ message}}
         {% endfor %}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    </div>    
 </div>
 {% endif %}
 
@@ -78,19 +78,16 @@
                     const jwttoken = e.access
                     localStorage.setItem("jwtToken" , jwttoken)
                 },
+                error : function (e){
+                    if (e.status == '400'){
+                        alert("username of password can not be empty")
+                    }else{
+                        console.log(e)
+                    }
+                }
 
             });
         })
     });
 </script>
 {% endblock extrascripts %}
-
-
-<!-- error: function (e) {
-    if(e.status == "401"){
-        alert("wrong credentials")
-    }
-    else{
-        console.log(e)
-    }
-} -->
