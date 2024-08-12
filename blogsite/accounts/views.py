@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 
 
 from accounts.forms import UserLoginForm
+from blogapp.token import generate_access_token
 
 
 class UserAuthenticationView(View):
@@ -65,6 +66,7 @@ class UserAuthenticationView(View):
                     messages.error(request,'invalid username or password')
                     return redirect('accounts:user_login')
                 else:
+                    generate_access_token(username,password)
                     login(request, user)
                     return redirect('blogapp:blog_dashboard')
         return render(request,'accounts/login.html',{'loginform':login_form})
