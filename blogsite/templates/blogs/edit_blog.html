@@ -17,7 +17,7 @@
         <div class="col-md-10 justify-content-center">
             <div class="card">
                 <div class="card-body pt-5">
-                    <form class="row g-3" method="post" id="add-blog-form">
+                    <form class="row g-3 needs-validation " novalidate method="post" id="add-blog-form">
                         {% csrf_token %}
 
                         <div class="col-md-12">
@@ -25,6 +25,8 @@
                                 <input type="text" class="form-control" id="id_title" placeholder="title" name="title"
                                     maxlength="200" required value="{{form.title.value}}" />
                                 <label for="id_task">blog title</label>
+                            </div>
+                            <div class="text-danger" id="invalid_title">
                             </div>
                         </div>
                         <div class="form-floating">
@@ -36,10 +38,13 @@
                         <div class="col-12">
                             <h4>Post:</h4>
                             {{form.media}} {{form.post}}
+                            <div class="text-danger " id="invalid_post">
+
                         </div>
 
                         <label class="col-sm-2">category:</label>
-                        <div class="col-sm-4">{{form.categories}}</div>
+                        <div class="col-9 ">{{form.categories}}</div>
+                        <div class="col-3 text-danger" id="invalid_category"></div>
 
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary">Update</button>
@@ -85,7 +90,18 @@
                     window.location.href = "{% url 'blogapp:blog_dashboard' %}"
                 },
                 error: function (e) {
-                    alert(JSON.stringify(e))
+                    if (e.status == "400") {
+                        if (e.responseJSON ){
+                            
+                            $("#invalid_title").html(`<li>${JSON.stringify(e.responseJSON.title[0])}</li>`)
+                            $("#invalid_post").html(`<li>${JSON.stringify(e.responseJSON.post[0])}</li>`)
+                        }
+                        if(e.responseJSON.categories){
+                            $("#invalid_category").html(`<li>please select one category </li>`)
+                        }
+                    } else {
+                        console.log(e)
+                        }
                 }
             });
 
