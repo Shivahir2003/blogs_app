@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-@3%vfjv$6(+$)ozz)*r4hr17u_57xt(8-=(fde6xorpuodwov+'
+
 URL_BLOG_DETAILS =f"http://127.0.0.1:8000/api/blogs/"
 
 
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'ckeditor',
     'drf_yasg',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +71,17 @@ CACHES = {
         }
     }
 }
+
+# celery settigns
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = {'application/json'}
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_EXTENDED = True
+
 
 ROOT_URLCONF = 'blogsite.urls'
 
@@ -145,7 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
