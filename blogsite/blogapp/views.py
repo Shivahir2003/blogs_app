@@ -4,10 +4,8 @@ from django.shortcuts import render,redirect
 from django.views.generic.base import View
 from django.conf import settings
 
-
 from blogapp.forms import BlogForm
 from blogapp.models import Blog
-
 
 class BlogAppView(View):
     """ 

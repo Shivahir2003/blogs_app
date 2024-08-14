@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New Blog Posts</title>
+  </head>
+  <body>
+    <h3>Hi, There</h3>
+    <p>checkout our new blog </p>
+    <div class="card" style="width: 18rem;">
+        <ul class="list-group list-group-flush">    
+                
+            {% for blog in blogs  %}
+            <li class="list-group-item">{{blog.title}} Author - {{blog.user.username}}</li>
+            {% endfor %}
+            
+        </ul>
+        <a href="http://127.0.0.1:8000/blogs/blog/dashboard">show all</a>
+      </div>
+    </body>
+</html>

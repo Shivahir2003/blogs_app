@@ -87,8 +87,6 @@ $("#add-blog-form").on("submit", function (event) {
     event.preventDefault();
     var data_post = CKEDITOR.instances.id_post.getData();
 
-    console.log($("#id_title").val())
-    console.log(data_post)
     $.ajax({
       type: 'POST',
       url: "http://127.0.0.1:8000/api/blogs/",
