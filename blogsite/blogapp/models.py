@@ -6,8 +6,10 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 from model_utils.models import TimeStampedModel
-
 from ckeditor.fields import RichTextField
+from celery import shared_task
+
+
 from blogapp.utils import send_email
 
 
@@ -43,6 +45,10 @@ class Blog(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        send_mail_for_blog_creation.delay(self.user.id)
+        return super().save(*args, **kwargs)
 
     class Meta:
         ordering=['-created']
@@ -133,3 +139,18 @@ def send_reply_mail(instance,**kwargs):
         html_content = render_to_string('email_templates/user_reply_email.html',{'instance':instance})
         text_content = strip_tags(html_content)
         send_email(subject,html_content,text_content,instance.comment.user)
+
+@shared_task
+def send_mail_for_blog_creation(user_id):
+    """
+        celery task for sending mail on blog creation to user
+        
+        Arguments:
+            user_id
+    """
+    user = User.objects.get(id = user_id)
+    subject = f'new blog has been created'
+    html_content =render_to_string('email_templates/new_blog_create_email.html')
+    text_content = strip_tags(html_content)
+    send_email(subject,html_content,text_content,user)
+    return "Mail sent for blog creation"
