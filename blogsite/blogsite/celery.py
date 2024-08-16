@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from celery import Celery
 from celery.schedules import crontab
@@ -22,7 +23,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'send-mail-every-day-for-blogs' : {
         'task': 'blogapp.tasks.send_mail_for_new_blogs',
-        'schedule' : crontab(minute='*/1')
+        'schedule' : timedelta(seconds=10)
     },
     'delete_completed_tasks' : {
         'task': 'blogapp.tasks.clear_task_result',
