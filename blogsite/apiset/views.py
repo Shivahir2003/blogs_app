@@ -51,7 +51,7 @@ class BlogApi(viewsets.ModelViewSet):
 
 class AuthBlogList(ListAPIView):
     serializer_class= BlogListSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
