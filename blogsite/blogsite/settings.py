@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'drf_yasg',
     'django_celery_results',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,10 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_EXTENDED = True
 
+# cronjobs
+CRONJOBS = [
+    ('*/1 * * * * ', 'blogapp.blog_reports.get_daily_blog_report')
+]
 
 ROOT_URLCONF = 'blogsite.urls'
 
