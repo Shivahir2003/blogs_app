@@ -22,14 +22,11 @@ def send_mail_for_new_blogs():
     if  Blog.objects.filter(created__date = timezone.now().date()).exists():
         blogs = Blog.objects.filter(created__date = timezone.now().date())
         users = User.objects.filter(is_superuser= False)
-        user_emails = []
         for user in users:
-            user_emails.append(user.email)
-
-        subject= f'Checkout new blog for today'
-        html_content = render_to_string('email_templates/daily_blog_email.html',{'blogs':blogs})
-        text_content = strip_tags(html_content)
-        send_mail_to_multiple(subject,text_content,html_content,user_emails)
+            subject= f'Checkout new blog for today'
+            html_content = render_to_string('email_templates/daily_blog_email.html',{'blogs':blogs})
+            text_content = strip_tags(html_content)
+            send_mail_to_multiple(subject,text_content,html_content,[user.email])
         return "mail send for today"
     else :
         return "not blogs created today"
