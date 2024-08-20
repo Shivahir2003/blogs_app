@@ -21,7 +21,7 @@
           </li>
           {% if request.user.is_superuser %}
           <li class="nav-item">
-            <a class="nav-link " aria-current="page" href="#">get blog report</a>
+            <a class="nav-link " aria-current="page" href="{% url 'blogapp:blog_report_generate' %}">get blog report</a>
           </li>
           {% endif %}
           {% endif %}

@@ -28,6 +28,9 @@
     $.ajax({
       type: 'GET',
       url: "http://127.0.0.1:8000/api/myblogs",
+      headers: {
+    "Authorization": "Bearer {{token}}"
+  },
       beforeSend: function () {
         $("#loding-page").show();
       },

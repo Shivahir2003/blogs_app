@@ -1,11 +1,17 @@
 import requests
+import os
 from django.urls import reverse
 from django.shortcuts import render,redirect
 from django.views.generic.base import View
 from django.conf import settings
+from django.http import HttpResponse
+from django.core.cache import cache
+from django.contrib.auth.decorators import login_required 
 
 from blogapp.forms import BlogForm
 from blogapp.models import Blog
+from blogapp.tasks import generate_blog_for_admin
+from blogapp.token import refresh_token_for_user
 
 class BlogAppView(View):
     """ 
@@ -135,4 +141,28 @@ class BlogAppView(View):
             Retunrns:
                 In Get : list all blog for logged in user
         """
-        return render(request,"blogs/myblogs.html")
+        if cache.get(f"access_token_{request.user.username}") :
+            token = cache.get(f"access_token_{request.user.username}")
+        else :
+            token = refresh_token_for_user(request.user)
+        return render(request,"blogs/myblogs.html",{"token" : token})
+
+@login_required
+def download_excel_data(request):
+    """
+        download blog report from cache  
+        
+        if not get in cache create celery task to generate and store report
+    """
+    if cache.get("is_report_generated"):
+        return cache.get("blog_report")
+    else:
+        generate_blog_for_admin.apply_async()
+
+        file_path = f"{settings.BASE_DIR}/reports/blog_reports.xlsx"
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+                response['Content-Disposition'] = 'attachment; filename="blog_report.xlsx"'
+                cache.set("blog_report",response,timeout=60)
+                return response
